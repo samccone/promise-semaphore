@@ -1,0 +1,25 @@
+{
+  "name": "promise-semaphore",
+  "version": "0.1.0",
+  "description": "semaphores and promises",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "promise",
+    "bluebird",
+    "semaphore"
+  ],
+  "author": "Sam Saccone",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "2.4.2",
+    "lodash": "^2.4.1"
+  },
+  "devDependencies": {
+    "chai-as-promised": "4.1.1",
+    "chai": "1.10.0",
+    "mocha": "^2.1.0"
+  }
+}
