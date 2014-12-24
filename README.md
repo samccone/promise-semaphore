@@ -1,7 +1,10 @@
 <h2 align="center"> promise-semaphore</h2>
 <p align="center"><b>npm i promise-semaphore</b></p>
-
------
+<p align="center">
+  <a title='Build Status' href="https://travis-ci.org/samccone/promise-semaphore">
+    <img src='https://travis-ci.org/samccone/promise-semaphore.svg' />
+  </a>
+</p>
 
 __promise-semaphore__ is for when you want to push a set of work to be done in a configurable serial fashion.
 
