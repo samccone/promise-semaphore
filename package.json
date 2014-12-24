@@ -14,12 +14,12 @@
   "author": "Sam Saccone",
   "license": "MIT",
   "dependencies": {
-    "bluebird": "2.4.2",
-    "lodash": "^2.4.1"
+    "bluebird": "2.4.2"
   },
   "devDependencies": {
     "chai-as-promised": "4.1.1",
     "chai": "1.10.0",
-    "mocha": "^2.1.0"
+    "mocha": "2.1.0",
+    "lodash": "2.4.1"
   }
 }
