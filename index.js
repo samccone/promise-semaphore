@@ -48,7 +48,9 @@ PSemaphore.prototype._assignRoom = function(room) {
     worker.Promise.reject(e);
   }.bind(this))
   .finally(function() {
-    this._processNext();
+    setImmediate(function(){
+      this._processNext();
+    }.bind(this))
   }.bind(this));
 };
 
