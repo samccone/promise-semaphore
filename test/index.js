@@ -17,7 +17,7 @@ describe("default semapore", function() {
   });
 
   it("resolves a single item", function(done) {
-    this.semapore.add(Promise.delay.bind(this, 1));
+    this.semapore.add(Promise.delay.bind(this, 1)).then(done)
   });
 
   it("returns the work value", function(done) {
