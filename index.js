@@ -41,11 +41,11 @@ PSemaphore.prototype._assignRoom = function(room) {
   this.active[room] = worker;
 
   worker()
-  .then(function() {
-    worker.Promise.resolve();
+  .then(function(v) {
+    worker.Promise.resolve(v);
   }.bind(this))
-  .catch(function() {
-    worker.Promise.reject();
+  .catch(function(e) {
+    worker.Promise.reject(e);
   }.bind(this))
   .finally(function() {
     this._processNext();

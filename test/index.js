@@ -22,6 +22,28 @@ describe("default semapore", function() {
     }).then(done)
   });
 
+  it("returns the work value", function(done) {
+    this.semapore.add(function() {
+      return Promise.delay(20).then(function() {
+        return "hi mom";
+      })
+    }).then(function(v) {
+      v.should.eql('hi mom');
+      done();
+    });
+  });
+
+  it("returns the thrown error", function(done) {
+    this.semapore.add(function() {
+      return Promise.delay(20).then(function() {
+        throw new Error("bye mom");
+      })
+    }).catch(function(e) {
+      e.message.should.eql('bye mom');
+      done();
+    });
+  });
+
   it("resolves multiple items added sequentially", function(done) {
     this.semapore.add(function() {
       return Promise.delay(20);
