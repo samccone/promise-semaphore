@@ -17,9 +17,7 @@ describe("default semapore", function() {
   });
 
   it("resolves a single item", function(done) {
-    this.semapore.add(function() {
-      return Promise.delay(1);
-    }).then(done)
+    this.semapore.add(Promise.delay.bind(this, 1));
   });
 
   it("returns the work value", function(done) {
@@ -45,18 +43,10 @@ describe("default semapore", function() {
   });
 
   it("resolves multiple items added sequentially", function(done) {
-    this.semapore.add(function() {
-      return Promise.delay(20);
-    })
-
-    this.semapore.add(function() {
-      return Promise.delay(20);
-    })
-
-    this.semapore.add(function() {
-      return Promise.delay(20);
-    }).then(done)
-
+    this.semapore.add(Promise.delay.bind(this, 20))
+    this.semapore.add(Promise.delay.bind(this, 20))
+    this.semapore.add(Promise.delay.bind(this, 20))
+    .then(done)
   });
 })
 
@@ -73,25 +63,19 @@ describe("multiroom semapore", function() {
 
   it("fills all rooms with items", function(done) {
     _.times(2, function() {
-      this.semapore.add(function() {
-        return Promise.delay(100);
-      })
+      this.semapore.add(Promise.delay.bind(this, 100));
     }, this);
 
-    this.semapore.add(function() {
-      return Promise.delay(100);
-    }).then(done)
+    this.semapore.add(Promise.delay.bind(this, 100))
+    .then(done)
   });
 
   it("handles more jobs then rooms", function(done) {
     _.times(5, function() {
-      this.semapore.add(function() {
-        return Promise.delay(100);
-      })
+      this.semapore.add(Promise.delay.bind(this, 100));
     }, this);
 
-    this.semapore.add(function() {
-      return Promise.delay(100);
-    }).then(done)
+    this.semapore.add(Promise.delay.bind(this, 100))
+    .then(done)
   });
 });
