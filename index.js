@@ -1,4 +1,6 @@
 var Promise = require('bluebird');
+var EventEmitter = require('events').EventEmitter;
+var util = require('util')
 
 function PSemaphore(opts) {
   opts = opts || {};
@@ -7,6 +9,8 @@ function PSemaphore(opts) {
   this.rooms  = opts.rooms || 1;
   this.active = [{Promise: {promise: Promise.resolve()}}]
 }
+
+util.inherits(PSemaphore, EventEmitter);
 
 PSemaphore.prototype._nextRoom = function() {
   var nextRoom = -1;
@@ -21,12 +25,15 @@ PSemaphore.prototype._nextRoom = function() {
     }
   });
 
+  this.emit('roomFound', nextRoom);
+
   return nextRoom;
 }
 
 PSemaphore.prototype._processNext = function() {
   // if the queue is empty no need to assign it
   if (this.queue.length == 0) {
+    this.emit('workDone');
     return;
   }
 
@@ -37,6 +44,7 @@ PSemaphore.prototype._processNext = function() {
 }
 
 PSemaphore.prototype._assignRoom = function(room) {
+  this.emit('roomAssigned', room);
   var worker = this.queue.shift();
   this.active[room] = worker;
 
@@ -55,6 +63,7 @@ PSemaphore.prototype._assignRoom = function(room) {
 };
 
 PSemaphore.prototype.add = function(work) {
+  this.emit('workAdded');
   work.Promise = Promise.pending();
   this.queue.push(work);
 

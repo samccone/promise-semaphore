@@ -48,6 +48,44 @@ describe("default semapore", function() {
     this.semapore.add(Promise.delay.bind(this, 20))
     .then(done)
   });
+
+  describe("event emitting", function() {
+    it("emits when work it added", function(done) {
+      this.semapore.on('workAdded', function() {
+        done();
+      });
+
+      this.semapore.add(Promise.resolve);
+    });
+
+    it("emits when a room is assigned", function(done) {
+      this.semapore.on('roomAssigned', function(room) {
+        room.should.eql(0);
+        done();
+      });
+
+      this.semapore.add(Promise.resolve);
+    });
+
+    it("emits when a room is found", function(done) {
+      this.semapore.on('roomFound', function(room) {
+        room.should.eql(0);
+        done();
+      });
+
+      this.semapore.add(Promise.resolve);
+    });
+
+    it("emits when all work is done", function(done) {
+      this.semapore.on('workDone', function() {
+        done();
+      });
+
+      this.semapore.add(Promise.delay.bind(this, 20));
+      this.semapore.add(Promise.delay.bind(this, 20));
+      this.semapore.add(Promise.delay.bind(this, 20));
+    });
+  });
 })
 
 describe("multiroom semapore", function() {

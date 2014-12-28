@@ -33,8 +33,35 @@ new PSemaphore({
 })
 ```
 
-_ensure your rooms are > 1, otherwise no work will ever get done!_
+_ensure your rooms are >= 1, otherwise no work will ever get done!_
 
+### Evented Interface
+
+PromiseSemaphore emits events to help you debug and hook into life cycle events.
+
+* __workDone__ is emitted when there are no more tasks in the work queue and all work has been completed.
+
+```js
+ps.on('workDone', function(){});
+```
+
+* __workAdded__ is emitted when a new task is added.
+
+```js
+ps.on('workAdded', function(){});
+```
+
+* __roomAssigned__ is emitted when a task is assigned to a room. The emitter emits the room that was assigned. (note: rooms are 0 indexed)
+
+```js
+ps.on('roomAssigned', function(room){});
+```
+
+* __roomFound__ is emitted when a room index has been looked up. If the no open rooms are found a room of -1 is emitted. (note: rooms are 0 indexed)
+
+```js
+ps.on('roomFound', function(room){});
+```
 
 #### New to semaphores?
 
