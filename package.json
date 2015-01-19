@@ -1,6 +1,10 @@
 {
   "name": "promise-semaphore",
-  "version": "0.2.0",
+  "version": "0.2.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/samccone/promise-semaphore.git"
+  },
   "description": "semaphores and promises",
   "main": "index.js",
   "scripts": {
