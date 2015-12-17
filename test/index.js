@@ -20,11 +20,29 @@ describe("default semapore", function() {
     this.semapore.add(Promise.delay.bind(this, 1)).then(done)
   });
 
+  if (typeof global.Promise !== 'undefined') {
+    it("works with ES6 Promise instances", function(done) {
+      // essentially the README example
+      this.semapore.add(function() {
+        return global.Promise.resolve();
+      }).then(done)
+    });
+  }
+
   it("returns the work value", function(done) {
     this.semapore.add(function() {
       return Promise.delay(20).then(function() {
         return "hi mom";
       })
+    }).then(function(v) {
+      v.should.eql('hi mom');
+      done();
+    });
+  });
+
+  it("returns the work value when used in non-promise fashion", function(done) {
+    this.semapore.add(function() {
+      return "hi mom";
     }).then(function(v) {
       v.should.eql('hi mom');
       done();
@@ -108,7 +126,7 @@ describe("multiroom semapore", function() {
     .then(done)
   });
 
-  it("handles more jobs then rooms", function(done) {
+  it("handles more jobs than rooms", function(done) {
     _.times(5, function() {
       this.semapore.add(Promise.delay.bind(this, 100));
     }, this);
