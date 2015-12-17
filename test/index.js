@@ -16,18 +16,34 @@ describe("default semapore", function() {
     this.semapore.add(Promise.delay.bind(this, 1)).should.be.defined;
   });
 
-  it("resolves a single item", function(done) {
-    this.semapore.add(Promise.delay.bind(this, 1)).then(done)
+  it("resolves a single item", function() {
+    return this.semapore.add(Promise.delay.bind(this, 1));
   });
 
-  it("returns the work value", function(done) {
-    this.semapore.add(function() {
+  if (typeof global.Promise !== 'undefined') {
+    it("works with ES6 Promise instances", function() {
+      // essentially the README example
+      return this.semapore.add(function() {
+        return global.Promise.resolve();
+      });
+    });
+  }
+
+  it("returns the work value", function() {
+    return this.semapore.add(function() {
       return Promise.delay(20).then(function() {
         return "hi mom";
       })
     }).then(function(v) {
       v.should.eql('hi mom');
-      done();
+    });
+  });
+
+  it("returns the work value when used in non-promise fashion", function() {
+    return this.semapore.add(function() {
+      return "hi mom";
+    }).then(function(v) {
+      v.should.eql('hi mom');
     });
   });
 
@@ -93,27 +109,25 @@ describe("multiroom semapore", function() {
     this.semapore = new PSemaphore({rooms: 3});
   });
 
-  it("resolves a single item", function(done) {
-    this.semapore.add(function() {
+  it("resolves a single item", function() {
+    return this.semapore.add(function() {
       return Promise.delay(1);
-    }).then(done)
+    })
   });
 
-  it("fills all rooms with items", function(done) {
+  it("fills all rooms with items", function() {
     _.times(2, function() {
       this.semapore.add(Promise.delay.bind(this, 100));
     }, this);
 
-    this.semapore.add(Promise.delay.bind(this, 100))
-    .then(done)
+    return this.semapore.add(Promise.delay.bind(this, 100))
   });
 
-  it("handles more jobs then rooms", function(done) {
+  it("handles more jobs than rooms", function() {
     _.times(5, function() {
       this.semapore.add(Promise.delay.bind(this, 100));
     }, this);
 
-    this.semapore.add(Promise.delay.bind(this, 100))
-    .then(done)
+    return this.semapore.add(Promise.delay.bind(this, 100))
   });
 });

@@ -48,7 +48,11 @@ PSemaphore.prototype._assignRoom = function(room) {
   var worker = this.queue.shift();
   this.active[room] = worker;
 
-  worker()
+  // not calling worker() directly here has the advantage that worker()
+  // does not necessarily have to return a bluebird-style Promise,
+  // or even a Promise instance at all
+  Promise.resolve()
+  .then(worker)
   .then(function(v) {
     worker.Promise.resolve(v);
   }.bind(this))
