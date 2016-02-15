@@ -18,7 +18,7 @@
   "author": "Sam Saccone",
   "license": "MIT",
   "dependencies": {
-    "bluebird": "3.1.1"
+    "bluebird": "^3.3.1"
   },
   "devDependencies": {
     "chai-as-promised": "5.1.0",

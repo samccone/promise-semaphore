@@ -2,6 +2,19 @@ var Promise = require('bluebird');
 var EventEmitter = require('events').EventEmitter;
 var util = require('util')
 
+// pending ponyfill
+// http://bluebirdjs.com/docs/api/deferred-migration.html
+Promise.pending = function() {
+  ret = {};
+
+  ret.promise = new Promise(function(res, rej) {
+    ret.resolve = res;
+    ret.reject = rej;
+  });
+
+  return ret;
+};
+
 function PSemaphore(opts) {
   opts = opts || {};
 
@@ -74,6 +87,5 @@ PSemaphore.prototype.add = function(work) {
   this._processNext();
   return work.Promise.promise;
 };
-
 
 module.exports = PSemaphore
