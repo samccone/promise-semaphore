@@ -68,7 +68,11 @@ PSemaphore.prototype._assignRoom = function(room) {
 
 PSemaphore.prototype.add = function(work) {
   this.emit('workAdded');
-  work.Promise = Promise.pending();
+  work.Promise = {}
+  work.Promise.promise = new Promise(function(resolve, reject){
+    work.Promise.resolve = resolve;
+    work.Promise.reject  = reject;
+  });
   this.queue.push(work);
 
   this._processNext();
