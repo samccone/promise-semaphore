@@ -7,6 +7,22 @@ var _              = require('lodash');
 chai.should();
 chai.use(chaiAsPromised);
 
+describe("multiqueue", function() {
+  it("handles nested queues when rooms === to depth", function() {
+    var queue = new PSemaphore({
+      rooms: 2
+    });
+
+    var bar = function() {
+      return queue.add(function(){})
+    };
+
+    return queue.add(function() {
+      return bar()
+    });
+  });
+});
+
 describe("default semapore", function() {
   beforeEach(function() {
     this.semapore = new PSemaphore()
