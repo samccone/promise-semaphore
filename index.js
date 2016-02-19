@@ -4,7 +4,7 @@ var util = require('util')
 
 // pending ponyfill
 // http://bluebirdjs.com/docs/api/deferred-migration.html
-Promise.pending = function() {
+function pendingPromise() {
   ret = {};
 
   ret.promise = new Promise(function(res, rej) {
@@ -81,7 +81,7 @@ PSemaphore.prototype._assignRoom = function(room) {
 
 PSemaphore.prototype.add = function(work) {
   this.emit('workAdded');
-  work.Promise = Promise.pending();
+  work.Promise = pendingPromise();
   this.queue.push(work);
 
   this._processNext();
