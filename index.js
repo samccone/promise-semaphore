@@ -2,8 +2,12 @@ var Promise = require('bluebird');
 var EventEmitter = require('events').EventEmitter;
 var util = require('util')
 
-// pending ponyfill
-// http://bluebirdjs.com/docs/api/deferred-migration.html
+/**
+* pending ponyfill
+* http://bluebirdjs.com/docs/api/deferred-migration.html
+*
+* @return {{promise: Promise, resolve: Function, reject: Function}}
+*/
 function pendingPromise() {
   ret = {};
 
@@ -15,7 +19,11 @@ function pendingPromise() {
   return ret;
 };
 
-function PSemaphore(opts) {
+/**
+ * @constructor
+ * @param {{rooms: number}} opt_opts
+ */
+function PSemaphore(opt_opts) {
   opts = opts || {};
 
   this.queue  = [];
@@ -25,6 +33,10 @@ function PSemaphore(opts) {
 
 util.inherits(PSemaphore, EventEmitter);
 
+/**
+ * @private
+ * @return {number}
+ */
 PSemaphore.prototype._nextRoom = function() {
   var nextRoom = -1;
 
@@ -43,6 +55,9 @@ PSemaphore.prototype._nextRoom = function() {
   return nextRoom;
 }
 
+/**
+ * @private
+ */
 PSemaphore.prototype._processNext = function() {
   // if the queue is empty no need to assign it
   if (this.queue.length == 0) {
@@ -56,6 +71,10 @@ PSemaphore.prototype._processNext = function() {
   }
 }
 
+/**
+ * @private
+ * @param {number} room
+ */
 PSemaphore.prototype._assignRoom = function(room) {
   this.emit('roomAssigned', room);
   var worker = this.queue.shift();
@@ -79,6 +98,10 @@ PSemaphore.prototype._assignRoom = function(room) {
   }.bind(this));
 };
 
+/**
+ * @param {Function} work
+ * @return {Promise<any>}
+ */
 PSemaphore.prototype.add = function(work) {
   this.emit('workAdded');
   work.Promise = pendingPromise();
