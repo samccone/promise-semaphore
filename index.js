@@ -24,10 +24,10 @@ function pendingPromise() {
  * @param {{rooms: number}} opt_opts
  */
 function PSemaphore(opt_opts) {
-  opts = opts || {};
+  opt_opts = opt_opts || {};
 
   this.queue  = [];
-  this.rooms  = opts.rooms || 1;
+  this.rooms  = opt_opts.rooms || 1;
   this.active = [{Promise: {promise: Promise.resolve()}}]
 }
 
