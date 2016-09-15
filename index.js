@@ -45,7 +45,7 @@ PSemaphore.prototype._nextRoom = function() {
   }
 
   this.active.forEach(function(v, i) {
-    if (v.Promise.promise.isFulfilled() && nextRoom == -1) {
+    if (!v.Promise.promise.isPending() && nextRoom == -1) {
       nextRoom = i;
     }
   });
