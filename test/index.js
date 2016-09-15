@@ -23,30 +23,30 @@ describe("multiqueue", function() {
   });
 });
 
-describe("default semapore", function() {
+describe("default semaphore", function() {
   beforeEach(function() {
-    this.semapore = new PSemaphore()
+    this.semaphore = new PSemaphore()
   });
 
   it("returns a promise", function() {
-    this.semapore.add(Promise.delay.bind(this, 1)).should.be.defined;
+    this.semaphore.add(Promise.delay.bind(this, 1)).should.be.defined;
   });
 
   it("resolves a single item", function() {
-    return this.semapore.add(Promise.delay.bind(this, 1));
+    return this.semaphore.add(Promise.delay.bind(this, 1));
   });
 
   if (typeof global.Promise !== 'undefined') {
     it("works with ES6 Promise instances", function() {
       // essentially the README example
-      return this.semapore.add(function() {
+      return this.semaphore.add(function() {
         return global.Promise.resolve();
       });
     });
   }
 
   it("returns the work value", function() {
-    return this.semapore.add(function() {
+    return this.semaphore.add(function() {
       return Promise.delay(20).then(function() {
         return "hi mom";
       })
@@ -56,7 +56,7 @@ describe("default semapore", function() {
   });
 
   it("returns the work value when used in non-promise fashion", function() {
-    return this.semapore.add(function() {
+    return this.semaphore.add(function() {
       return "hi mom";
     }).then(function(v) {
       v.should.eql('hi mom');
@@ -64,7 +64,7 @@ describe("default semapore", function() {
   });
 
   it("returns the thrown error", function(done) {
-    this.semapore.add(function() {
+    this.semaphore.add(function() {
       return Promise.delay(20).then(function() {
         throw new Error("bye mom");
       })
@@ -75,75 +75,89 @@ describe("default semapore", function() {
   });
 
   it("resolves multiple items added sequentially", function(done) {
-    this.semapore.add(Promise.delay.bind(this, 20))
-    this.semapore.add(Promise.delay.bind(this, 20))
-    this.semapore.add(Promise.delay.bind(this, 20))
+    this.semaphore.add(Promise.delay.bind(this, 20))
+    this.semaphore.add(Promise.delay.bind(this, 20))
+    this.semaphore.add(Promise.delay.bind(this, 20))
     .then(done)
   });
 
   describe("event emitting", function() {
     it("emits when work it added", function(done) {
-      this.semapore.on('workAdded', function() {
+      this.semaphore.on('workAdded', function() {
         done();
       });
 
-      this.semapore.add(Promise.resolve);
+      this.semaphore.add(Promise.resolve);
     });
 
     it("emits when a room is assigned", function(done) {
-      this.semapore.on('roomAssigned', function(room) {
+      this.semaphore.on('roomAssigned', function(room) {
         room.should.eql(0);
         done();
       });
 
-      this.semapore.add(Promise.resolve);
+      this.semaphore.add(Promise.resolve);
     });
 
     it("emits when a room is found", function(done) {
-      this.semapore.on('roomFound', function(room) {
+      this.semaphore.on('roomFound', function(room) {
         room.should.eql(0);
         done();
       });
 
-      this.semapore.add(Promise.resolve);
+      this.semaphore.add(Promise.resolve);
     });
 
     it("emits when all work is done", function(done) {
-      this.semapore.on('workDone', function() {
+      this.semaphore.on('workDone', function() {
         done();
       });
 
-      this.semapore.add(Promise.delay.bind(this, 20));
-      this.semapore.add(Promise.delay.bind(this, 20));
-      this.semapore.add(Promise.delay.bind(this, 20));
+      this.semaphore.add(Promise.delay.bind(this, 20));
+      this.semaphore.add(Promise.delay.bind(this, 20));
+      this.semaphore.add(Promise.delay.bind(this, 20));
     });
   });
 })
 
-describe("multiroom semapore", function() {
+describe("multiroom semaphore", function() {
   beforeEach(function() {
-    this.semapore = new PSemaphore({rooms: 3});
+    this.semaphore = new PSemaphore({rooms: 3});
   });
 
   it("resolves a single item", function() {
-    return this.semapore.add(function() {
+    return this.semaphore.add(function() {
       return Promise.delay(1);
     })
   });
 
   it("fills all rooms with items", function() {
     _.times(2, function() {
-      this.semapore.add(Promise.delay.bind(this, 100));
+      this.semaphore.add(Promise.delay.bind(this, 100));
     }, this);
 
-    return this.semapore.add(Promise.delay.bind(this, 100))
+    return this.semaphore.add(Promise.delay.bind(this, 100))
   });
 
   it("handles more jobs than rooms", function() {
     _.times(5, function() {
-      this.semapore.add(Promise.delay.bind(this, 100));
+      this.semaphore.add(Promise.delay.bind(this, 100));
     }, this);
 
-    return this.semapore.add(Promise.delay.bind(this, 100))
+    return this.semaphore.add(Promise.delay.bind(this, 100))
   });
+
+  it("handles promise rejection", function() {
+    function worker (i) {
+      return function () { return Promise.delay(100).then(function () { throw new Error('Some error ' + i) }) }
+    }
+    var count = 0
+    var promises = []
+    _.times(5, function(i) {
+      promises.push(this.semaphore.add(worker(i)).catch(function () { count++ }))
+    }, this);
+    return Promise.all(promises).then(function() {
+      count.should.be.eql(5)
+    })
+  })
 });
